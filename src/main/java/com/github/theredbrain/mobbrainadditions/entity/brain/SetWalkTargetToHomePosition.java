@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 /**
- * Set the walk target of the entity to its current attack target.
+ * Set the walk and look target of the entity to its current home position.
  * @param <E> The entity
  */
 public class SetWalkTargetToHomePosition<E extends MobEntity> extends ExtendedBehaviour<E> {

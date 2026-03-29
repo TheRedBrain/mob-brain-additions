@@ -25,7 +25,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**
- * Sets the attack target of the entity, utilising a few sources of targets. Only runs when entity has the {@link MemoryModuleTypeRegistry#IS_NEAR_HOME} memory. The target also has to <br>
+ * Sets the attack target of the entity, utilising a few sources of targets. Only runs when entity has the {@link MemoryModuleTypeRegistry#IS_NEAR_HOME} memory. The target also has to be near the entity's home position.<br>
  * In order:
  * <ol>
  *     <li>The {@link MemoryModuleType#NEAREST_ATTACKABLE} memory value</li>
@@ -37,6 +37,7 @@ import java.util.function.Predicate;
  *     <li>Targets any live entity, as long as it's not a creative-mode player</li>
  *     <li>Does not alert nearby allies when retaliating</li>
  *     <li>If enabled, only alerts allies of the same class, if they don't already have a target themselves</li>
+ *     <li>The maximum distance between the target and the home position of the entity is 10 blocks</li>
  * </ul>
  * @param <E> The entity
  */
