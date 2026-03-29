@@ -3,15 +3,14 @@
 	"id": "mob_brain_additions",
 	"version": "${version}",
 	"name": "Mob Brain Additions",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Adds features intended to give mobs that use the brain system, additional functionality.",
 	"authors": [
-		"Me!"
+		"TheRedBrain"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/TheRedBrain/script-blocks"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/mob_brain_additions/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -30,9 +29,10 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.18.5",
-		"minecraft": "~1.21.1",
-		"java": ">=21",
-		"fabric-api": "*"
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "${minecraft_version}",
+		"fabric-api": "*",
+		"fzzy_config": ">=${fzzy_config_version}",
+		"smartbrainlib": ">=${smart_brain_lib_version}"
 	}
 }
