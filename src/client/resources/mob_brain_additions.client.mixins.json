@@ -3,6 +3,7 @@
 	"package": "com.github.theredbrain.mobbrainadditions.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
+		"network.ClientPlayerEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
