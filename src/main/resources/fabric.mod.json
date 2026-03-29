@@ -3,12 +3,12 @@
 	"id": "mob_brain_additions",
 	"version": "${version}",
 	"name": "Mob Brain Additions",
-	"description": "Adds features intended to give mobs that use the brain system, additional functionality.",
+	"description": "This mod adds features that give additional functionality to mobs that use the brain system.",
 	"authors": [
 		"TheRedBrain"
 	],
 	"contact": {
-		"sources": "https://github.com/TheRedBrain/script-blocks"
+		"sources": "https://github.com/TheRedBrain/mob-brain-additions"
 	},
 	"license": "MIT",
 	"icon": "assets/mob_brain_additions/icon.png",
