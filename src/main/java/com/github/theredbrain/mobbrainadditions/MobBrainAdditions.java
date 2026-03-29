@@ -3,6 +3,8 @@ package com.github.theredbrain.mobbrainadditions;
 import com.github.theredbrain.mobbrainadditions.config.ServerConfig;
 import com.github.theredbrain.mobbrainadditions.registry.BlockRegistry;
 import com.github.theredbrain.mobbrainadditions.registry.EntityRegistry;
+import com.github.theredbrain.mobbrainadditions.registry.MemoryModuleTypeRegistry;
+import com.github.theredbrain.mobbrainadditions.registry.SensorTypeRegistry;
 import com.github.theredbrain.mobbrainadditions.registry.ServerPacketRegistry;
 import me.fzzyhmstrs.fzzy_config.api.ConfigApiJava;
 import net.fabricmc.api.ModInitializer;
@@ -26,6 +28,8 @@ public class MobBrainAdditions implements ModInitializer {
 
 		BlockRegistry.init();
 		EntityRegistry.init();
+		MemoryModuleTypeRegistry.init();
+		SensorTypeRegistry.init();
 		ServerPacketRegistry.init();
 	}
 
