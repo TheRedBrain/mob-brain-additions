@@ -1,6 +1,6 @@
 # Mob Brain Additions
 
-This mod adds features that give additional functionality to mobs that use the brain system.
+This API can be used by other mods to give additional functionality to mobs that use the brain system.
 
 This mod depends on the SmartBrainLib mod, which implements an optimised and expanded version of the vanilla brain system.
 

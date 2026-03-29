@@ -3,7 +3,7 @@
 	"id": "mob_brain_additions",
 	"version": "${version}",
 	"name": "Mob Brain Additions",
-	"description": "This mod adds features that give additional functionality to mobs that use the brain system.",
+	"description": "This API can be used by other mods to give additional functionality to mobs that use the brain system.",
 	"authors": [
 		"TheRedBrain"
 	],

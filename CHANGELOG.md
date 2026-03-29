@@ -1,6 +1,6 @@
 # 1.0.0
 
-Adds features intended to give mobs that use the brain system additional functionality.
+This API can be used by other mods to give additional functionality to mobs that use the brain system.
 
 This first release includes:
 
