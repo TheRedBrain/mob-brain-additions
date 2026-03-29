@@ -1,6 +1,8 @@
 plugins {
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
-	id 'maven-publish'
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+	id "com.matthewprenger.cursegradle" version "1.4.0"
+	id "com.github.breadmoirai.github-release" version "2.4.1"
+	id "com.modrinth.minotaur" version "2.+"
 }
 
 version = project.mod_version
@@ -11,18 +13,62 @@ base {
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+
+	// Spell Engine, Spell Power
+	maven {
+		name = "Modrinth"
+		url = "https://api.modrinth.com/maven"
+		content {
+			includeGroup "maven.modrinth"
+		}
+	}
+
+	// Fzzy Config
+	maven {
+		name = "FzzyMaven"
+		url = "https://maven.fzzyhmstrs.me/"
+	}
+
+	// SmartBrainLib
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = 'SmartBrainLib'
+				url = 'https://dl.cloudsmith.io/public/tslat/sbl/maven/'
+			}
+		}
+		filter {
+			includeGroup('net.tslat.smartbrainlib')
+		}
+	}
+
+	// Cloth Config
+	maven {
+		url "https://maven.shedaniel.me/"
+	}
+
+	// Cloth Config
+	maven {
+		name = "TerraformersMC"
+		url = "https://maven.terraformersmc.com/"
+	}
+
+	// Player Animator
+	maven {
+		name "KosmX's maven"
+		url 'https://maven.kosmx.dev/'
+	}
+
+	flatDir {
+		dirs("libs")
+	}
 }
 
 loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"modid" {
+		"mob_brain_additions" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
@@ -33,24 +79,46 @@ loom {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-	
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Fzzy Config
+	modImplementation"me.fzzyhmstrs:fzzy_config:${project.fzzy_config_version}"
+
+	// SmartBrainLib
+	modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.minecraft_version}:${project.smart_brain_lib_version}"
+
+	// Cloth Config
+	modImplementation ("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
+
+	// Player Animation Lib
+	modImplementation("dev.kosmx.player-anim:player-animation-lib-fabric:${project.player_animator_version}")
+
+	// Spell Engine
+	modImplementation("maven.modrinth:spell-engine:${project.spell_engine_version}")
+
+	// Spell Power
+	modImplementation("maven.modrinth:spell-power:${project.spell_power_version}")
+
+	// Tiny Config
+	modImplementation("maven.modrinth:tiny-config:${project.tiny_config_version}")
+
 }
 
 processResources {
 	inputs.property "version", project.version
+	filteringCharset "UTF-8"
 
 	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
+		expand(project.properties)
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+	it.options.release = 21
 }
 
 java {
@@ -59,8 +127,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
@@ -71,20 +139,81 @@ jar {
 	}
 }
 
-// configure the maven publication
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
-			from components.java
+ext.changelog_last_section = { ->
+	return new File("CHANGELOG.md").text.split('\n# ')[0]
+}
+
+if(project.hasProperty('release_type')) {
+	tasks.register("publishMod") {
+		dependsOn(build)
+//		finalizedBy(tasks.curseforge)
+		finalizedBy(tasks.modrinth)
+		finalizedBy(tasks.githubRelease)
+	}
+
+//	curseforge {
+//		apiKey = System.getenv("CURSEFORGE_API_KEY")
+//		project {
+//			id = System.getenv("CURSEFORGE_PROJECT_ID")
+//			changelog = changelog_last_section()
+//			changelogType = 'markdown'
+//			releaseType = release_type
+//			addGameVersion "${project.minecraft_version}"
+//			addGameVersion "Fabric"
+//
+//			relations {
+//				requiredDependency 'fabric-api'
+//				requiredDependency 'fzzy-config'
+//				requiredDependency 'script-blocks'
+//				requiredDependency 'lootable-blocks'
+//			}
+//
+//			mainArtifact(remapJar)
+//			afterEvaluate {
+//				uploadTask.dependsOn(remapJar)
+//			}
+//			options {
+//				forgeGradleIntegration = false
+//			}
+//		}
+//	}
+
+	modrinth {
+		token = System.getenv("MODRINTH_API_KEY")
+		projectId = System.getenv("MODRINTH_PROJECT_ID") // This can be the project ID or the slug. Either will work!
+		versionName = "${version}" // You don't need to set this manually. Will fail if Modrinth has this version already
+		versionNumber = "${version}" // You don't need to set this manually. Will fail if Modrinth has this version already
+		versionType = release_type // This is the default -- can also be `beta` or `alpha`
+		uploadFile = remapJar // With Loom, this MUST be set to `remapJar` instead of `jar`!
+		gameVersions = ["${project.minecraft_version}"] // Must be an array, even with only one version
+		loaders = ["fabric"] // Must also be an array - no need to specify this if you're using Loom or ForgeGradle
+		changelog = changelog_last_section()
+		dependencies { // A special DSL for creating dependencies
+			// scope.type
+			// The scope can be `required`, `optional`, `incompatible`, or `embedded`
+			// The type can either be `project` or `version`
+			required.project 'fabric-api'
+			required.project 'fzzy-config'
+			required.project 'smartbrainlib'
 		}
 	}
 
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
+	githubRelease {
+		token System.getenv("GH_API_KEY") // This is your personal access token with Repo permissions
+		owner System.getenv("GH_OWNER") // default is the last part of your group. Eg group: "com.github.breadmoirai" => owner: "breadmoirai"
+		repo System.getenv("GH_REPO") // by default this is set to your project name
+		tagName "${version}" // by default this is set to "v${project.version}"
+		targetCommitish "${project.minecraft_version}" // by default this is set to "main"
+		releaseName "Release" // Release title, by default this is the same as the tagName
+		generateReleaseNotes false // Generate release notes automatically, if true and body is present, body will be pre-pended, if name is not given, one will be generated by the tag
+		// body.set "" // by default this is empty
+		draft false // by default this is true
+		prerelease release_type != "release" // by default this is false
+		// releaseAssets jar.destinationDir.listFiles // this points to which files you want to upload as assets with your release, by default this is empty
+		allowUploadToExisting false // Setting this to true will allow this plugin to upload artifacts to a release if it found an existing one. If overwrite is set to true, this option is ignored.
+		overwrite false // by default false; if set to true, will delete an existing release with the same tag and name
+		// dryRun true // by default false; you can use this to see what actions would be taken without making a release
+		apiEndpoint "https://api.github.com" // should only change for github enterprise users
+		client // This is the okhttp client used for http requests
 	}
 }

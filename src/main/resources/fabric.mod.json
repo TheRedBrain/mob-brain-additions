@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "mob_brain_additions",
 	"version": "${version}",
-	"name": "Example mod",
+	"name": "Mob Brain Additions",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
 		"Me!"
@@ -12,27 +12,27 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/modid/icon.png",
+	"icon": "assets/mob_brain_additions/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"com.github.theredbrain.mobbrainadditions.MobBrainAdditions"
 		],
 		"client": [
-			"com.example.ExampleModClient"
+			"com.github.theredbrain.mobbrainadditions.MobBrainAdditionsClient"
 		]
 	},
 	"mixins": [
-		"modid.mixins.json",
+		"mob_brain_additions.mixins.json",
 		{
-			"config": "modid.client.mixins.json",
+			"config": "mob_brain_additions.client.mixins.json",
 			"environment": "client"
 		}
 	],
 	"depends": {
 		"fabricloader": ">=0.18.5",
-		"minecraft": "~26.1",
-		"java": ">=25",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
 		"fabric-api": "*"
 	}
 }
