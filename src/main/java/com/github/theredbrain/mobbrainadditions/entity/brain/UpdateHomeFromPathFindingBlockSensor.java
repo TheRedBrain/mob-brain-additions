@@ -1,6 +1,6 @@
 package com.github.theredbrain.mobbrainadditions.entity.brain;
 
-import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingNodeBlockEntity;
+import com.github.theredbrain.mobbrainadditions.block.entity.ProvidesPathFindingNode;
 import com.github.theredbrain.mobbrainadditions.entity.mob.TracksPathFindingNodes;
 import com.github.theredbrain.mobbrainadditions.registry.BlockRegistry;
 import com.github.theredbrain.mobbrainadditions.registry.SensorTypeRegistry;
@@ -40,6 +40,7 @@ public class UpdateHomeFromPathFindingBlockSensor<E extends MobEntity> extends P
 
 	/**
 	 * Set the radius for the sensor to scan
+	 *
 	 * @param radius The coordinate radius, in blocks
 	 * @return this
 	 */
@@ -49,8 +50,9 @@ public class UpdateHomeFromPathFindingBlockSensor<E extends MobEntity> extends P
 
 	/**
 	 * Set the radius for the sensor to scan.
+	 *
 	 * @param xz The X/Z coordinate radius, in blocks
-	 * @param y The Y coordinate radius, in blocks
+	 * @param y  The Y coordinate radius, in blocks
 	 * @return this
 	 */
 	public UpdateHomeFromPathFindingBlockSensor<E> setRadius(double xz, double y) {
@@ -68,10 +70,10 @@ public class UpdateHomeFromPathFindingBlockSensor<E extends MobEntity> extends P
 
 			if (this.predicate().test(state, entity)) {
 
-				if (entity instanceof TracksPathFindingNodes tracksPathFindingNodes && level.getBlockEntity(pos) instanceof PathFindingNodeBlockEntity pathFindingNodeBlockEntity) {
+				if (entity instanceof TracksPathFindingNodes tracksPathFindingNodes && level.getBlockEntity(pos) instanceof ProvidesPathFindingNode providesPathFindingNode) {
 					String trackedPathFindingNodeId = tracksPathFindingNodes.getTrackedPathFindingNodeId();
 					if (!trackedPathFindingNodeId.isEmpty()) {
-						newHomePos = pathFindingNodeBlockEntity.getNode(trackedPathFindingNodeId);
+						newHomePos = providesPathFindingNode.getNode(trackedPathFindingNodeId);
 						if (newHomePos != null) {
 							BrainUtils.setMemory(entity, MemoryModuleType.HOME, new GlobalPos(level.getRegistryKey(), newHomePos));
 							break;
