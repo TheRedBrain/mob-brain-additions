@@ -1,11 +1,9 @@
-package com.github.theredbrain.mobbrainadditions.entity.brain;
+package com.github.theredbrain.mobbrainadditions.entity.brain.sensor;
 
 import com.github.theredbrain.mobbrainadditions.block.entity.ProvidesPathFindingNode;
 import com.github.theredbrain.mobbrainadditions.entity.mob.TracksPathFindingNodes;
-import com.github.theredbrain.mobbrainadditions.registry.BlockRegistry;
 import com.github.theredbrain.mobbrainadditions.registry.SensorTypeRegistry;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.entity.mob.MobEntity;
@@ -13,19 +11,17 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
-import net.tslat.smartbrainlib.api.core.sensor.PredicateSensor;
 import net.tslat.smartbrainlib.object.SquareRadius;
 import net.tslat.smartbrainlib.util.BrainUtils;
 
 import java.util.List;
 
-public class UpdateHomeFromPathFindingBlockSensor<E extends MobEntity> extends PredicateSensor<BlockState, E> { // Extend PredicateSensor so we can use the builtin predicate to check for lava
+public class UpdateHomeFromPathFindingBlockSensor<E extends MobEntity> extends ExtendedSensor<E> { // Extend PredicateSensor so we can use the builtin predicate to check for lava
 	private static final List<MemoryModuleType<?>> MEMORIES = ObjectArrayList.of(MemoryModuleType.HOME); // Make a static list of memories this sensor applies to. For this example we'll assume we registered a custom MemoryModuleType in MyMemoryTypes
 
 	protected SquareRadius radius = new SquareRadius(1, 1);
 
 	public UpdateHomeFromPathFindingBlockSensor() {
-		setPredicate((state, entity) -> state.isOf(BlockRegistry.PATH_FINDING_NODE_BLOCK));
 	}
 
 	@Override
@@ -62,22 +58,18 @@ public class UpdateHomeFromPathFindingBlockSensor<E extends MobEntity> extends P
 	}
 
 	@Override
-	protected void sense(ServerWorld level, E entity) {
+	public void sense(ServerWorld level, E entity) {
 		BlockPos newHomePos;
 
 		for (BlockPos pos : BlockPos.iterate(entity.getBlockPos().subtract(this.radius.toVec3i()), entity.getBlockPos().add(this.radius.toVec3i()))) {
-			BlockState state = level.getBlockState(pos);
 
-			if (this.predicate().test(state, entity)) {
-
-				if (entity instanceof TracksPathFindingNodes tracksPathFindingNodes && level.getBlockEntity(pos) instanceof ProvidesPathFindingNode providesPathFindingNode) {
-					String trackedPathFindingNodeId = tracksPathFindingNodes.getTrackedPathFindingNodeId();
-					if (!trackedPathFindingNodeId.isEmpty()) {
-						newHomePos = providesPathFindingNode.getNode(trackedPathFindingNodeId);
-						if (newHomePos != null) {
-							BrainUtils.setMemory(entity, MemoryModuleType.HOME, new GlobalPos(level.getRegistryKey(), newHomePos));
-							break;
-						}
+			if (entity instanceof TracksPathFindingNodes tracksPathFindingNodes && level.getBlockEntity(pos) instanceof ProvidesPathFindingNode providesPathFindingNode) {
+				String trackedPathFindingNodeId = tracksPathFindingNodes.getTrackedPathFindingNodeId();
+				if (!trackedPathFindingNodeId.isEmpty()) {
+					newHomePos = providesPathFindingNode.getNode(trackedPathFindingNodeId);
+					if (newHomePos != null) {
+						BrainUtils.setMemory(entity, MemoryModuleType.HOME, new GlobalPos(level.getRegistryKey(), newHomePos));
+						break;
 					}
 				}
 			}

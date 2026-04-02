@@ -1,4 +1,4 @@
-package com.github.theredbrain.mobbrainadditions.entity.brain;
+package com.github.theredbrain.mobbrainadditions.entity.brain.sensor;
 
 import com.github.theredbrain.mobbrainadditions.registry.MemoryModuleTypeRegistry;
 import com.github.theredbrain.mobbrainadditions.registry.SensorTypeRegistry;

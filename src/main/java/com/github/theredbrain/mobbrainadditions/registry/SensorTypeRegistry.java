@@ -1,9 +1,9 @@
 package com.github.theredbrain.mobbrainadditions.registry;
 
 import com.github.theredbrain.mobbrainadditions.MobBrainAdditions;
-import com.github.theredbrain.mobbrainadditions.entity.brain.IsNearHomeSensor;
-import com.github.theredbrain.mobbrainadditions.entity.brain.UpdateHomeFromPathFindingBlockSensor;
+import com.github.theredbrain.mobbrainadditions.entity.brain.sensor.IsNearHomeSensor;
 import com.github.theredbrain.mobbrainadditions.entity.brain.sensor.IsNearPathEndSensor;
+import com.github.theredbrain.mobbrainadditions.entity.brain.sensor.UpdateHomeFromPathFindingBlockSensor;
 import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;

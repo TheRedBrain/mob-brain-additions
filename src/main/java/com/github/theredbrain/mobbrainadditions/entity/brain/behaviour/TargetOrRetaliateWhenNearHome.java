@@ -1,4 +1,4 @@
-package com.github.theredbrain.mobbrainadditions.entity.brain;
+package com.github.theredbrain.mobbrainadditions.entity.brain.behaviour;
 
 import com.github.theredbrain.mobbrainadditions.registry.MemoryModuleTypeRegistry;
 import com.mojang.datafixers.util.Pair;
