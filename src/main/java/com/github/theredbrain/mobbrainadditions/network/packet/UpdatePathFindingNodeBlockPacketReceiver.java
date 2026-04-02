@@ -22,6 +22,7 @@ public class UpdatePathFindingNodeBlockPacketReceiver implements ServerPlayNetwo
 		ServerPlayerEntity serverPlayerEntity = context.player();
 
 		if (!serverPlayerEntity.isCreativeLevelTwoOp()) {
+			serverPlayerEntity.sendMessage(Text.translatable("hud.message.node_block.no_permission"), true);
 			return;
 		}
 
@@ -41,7 +42,7 @@ public class UpdatePathFindingNodeBlockPacketReceiver implements ServerPlayNetwo
 		if (blockEntity instanceof PathFindingNodeBlockEntity pathFindingNodeBlockEntity) {
 
 			pathFindingNodeBlockEntity.setNodes(nodes);
-			serverPlayerEntity.sendMessage(Text.translatable("hud.message.script_block.update_successful"), true);
+			serverPlayerEntity.sendMessage(Text.translatable("hud.message.node_block.update_successful", blockState.getBlock().getName()), true);
 			pathFindingNodeBlockEntity.markDirty();
 			world.updateListeners(pathFindingNodeBlockPosition, blockState, blockState, Block.NOTIFY_ALL);
 		}

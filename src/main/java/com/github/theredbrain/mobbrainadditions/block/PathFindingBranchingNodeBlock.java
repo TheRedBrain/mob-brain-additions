@@ -1,12 +1,11 @@
 package com.github.theredbrain.mobbrainadditions.block;
 
 import com.github.theredbrain.mobbrainadditions.MobBrainAdditions;
-import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingNodeBlockEntity;
+import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingBranchingNodeBlockEntity;
 import com.github.theredbrain.mobbrainadditions.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.mobbrainadditions.registry.BlockRegistry;
 import com.github.theredbrain.mobbrainadditions.util.RotationUtils;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -37,19 +36,19 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class PathFindingNodeBlock extends BlockWithEntity implements Waterloggable {
-	public static final MapCodec<PathFindingNodeBlock> CODEC = createCodec(PathFindingNodeBlock::new);
+public class PathFindingBranchingNodeBlock extends BlockWithEntity implements Waterloggable {
+	public static final MapCodec<PathFindingBranchingNodeBlock> CODEC = createCodec(PathFindingBranchingNodeBlock::new);
 	public static final IntProperty ROTATED = IntProperty.of("rotated", 0, 3);
 	public static final BooleanProperty X_MIRRORED = BooleanProperty.of("x_mirrored");
 	public static final BooleanProperty Z_MIRRORED = BooleanProperty.of("z_mirrored");
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
 
-	public PathFindingNodeBlock(AbstractBlock.Settings settings) {
+	public PathFindingBranchingNodeBlock(Settings settings) {
 		super(settings);
 		this.setDefaultState(this.stateManager.getDefaultState().with(ROTATED, 0).with(X_MIRRORED, false).with(Z_MIRRORED, false).with(WATERLOGGED, false));
 	}
 
-	public MapCodec<PathFindingNodeBlock> getCodec() {
+	public MapCodec<PathFindingBranchingNodeBlock> getCodec() {
 		return CODEC;
 	}
 
@@ -61,7 +60,7 @@ public class PathFindingNodeBlock extends BlockWithEntity implements Waterloggab
 	@Nullable
 	@Override
 	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-		return new PathFindingNodeBlockEntity(pos, state);
+		return new PathFindingBranchingNodeBlockEntity(pos, state);
 	}
 
 	@Override
@@ -83,7 +82,7 @@ public class PathFindingNodeBlock extends BlockWithEntity implements Waterloggab
 	protected BlockState getStateForNeighborUpdate(
 			BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos
 	) {
-		if ((Boolean)state.get(WATERLOGGED)) {
+		if ((Boolean) state.get(WATERLOGGED)) {
 			world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
 		}
 
@@ -103,11 +102,11 @@ public class PathFindingNodeBlock extends BlockWithEntity implements Waterloggab
 
 	@Override
 	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-		BlockState pathFindingNodeBlockState = BlockRegistry.VISIBLE_PATH_FINDING_NODE_BLOCK.getDefaultState();
-		if (!(MobBrainAdditions.SERVER_CONFIG.enable_path_finding_node_block_debug_mode.get() || context.isHolding(BlockRegistry.PATH_FINDING_NODE_BLOCK.asItem()))) {
-			pathFindingNodeBlockState = Blocks.AIR.getDefaultState();
+		BlockState pathFindingBranchingNodeBlockState = BlockRegistry.VISIBLE_PATH_FINDING_BRANCHING_NODE_BLOCK.getDefaultState();
+		if (!(MobBrainAdditions.SERVER_CONFIG.enable_path_finding_node_block_debug_mode.get() || context.isHolding(BlockRegistry.PATH_FINDING_BRANCHING_NODE_BLOCK.asItem()))) {
+			pathFindingBranchingNodeBlockState = Blocks.AIR.getDefaultState();
 		}
-		return pathFindingNodeBlockState.getOutlineShape(world, pos);
+		return pathFindingBranchingNodeBlockState.getOutlineShape(world, pos);
 	}
 
 	@Override
@@ -123,8 +122,8 @@ public class PathFindingNodeBlock extends BlockWithEntity implements Waterloggab
 	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
 		BlockEntity blockEntity = world.getBlockEntity(pos);
-		if (blockEntity instanceof PathFindingNodeBlockEntity pathFindingNodeBlockEntity && player.isCreativeLevelTwoOp()) {
-			((DuckPlayerEntityMixin) player).scriptblocks$openPathFindingNodeBlockScreen(pathFindingNodeBlockEntity);
+		if (blockEntity instanceof PathFindingBranchingNodeBlockEntity pathFindingBranchingNodeBlockEntity && player.isCreativeLevelTwoOp()) {
+			((DuckPlayerEntityMixin) player).scriptblocks$openPathFindingBranchingNodeBlockScreen(pathFindingBranchingNodeBlockEntity);
 			return ActionResult.success(world.isClient);
 		}
 		return ActionResult.PASS;

@@ -2,6 +2,7 @@ package com.github.theredbrain.mobbrainadditions.block.entity;
 
 import com.github.theredbrain.mobbrainadditions.block.PathFindingNodeBlock;
 import com.github.theredbrain.mobbrainadditions.registry.EntityRegistry;
+import com.github.theredbrain.mobbrainadditions.util.RotationUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -17,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PathFindingNodeBlockEntity extends BlockEntity {
+public class PathFindingNodeBlockEntity extends BlockEntity implements ProvidesPathFindingNode {
 	private int rotated = 0;
 	private boolean x_mirrored = false;
 	private boolean z_mirrored = false;
@@ -45,13 +46,6 @@ public class PathFindingNodeBlockEntity extends BlockEntity {
 		nbt.putBoolean("x_mirrored", this.x_mirrored);
 		nbt.putBoolean("z_mirrored", this.z_mirrored);
 
-		this.rotated = MathHelper.clamp(nbt.getInt("rotated"), 0, 3);
-		this.x_mirrored = nbt.getBoolean("x_mirrored");
-		this.z_mirrored = nbt.getBoolean("z_mirrored");
-		if (this.getCachedState().getBlock() instanceof PathFindingNodeBlock) {
-			this.onRotate(this.getCachedState());
-		}
-
 		super.writeNbt(nbt, registryLookup);
 	}
 
@@ -67,6 +61,13 @@ public class PathFindingNodeBlockEntity extends BlockEntity {
 					nbt.getInt("node_" + i + "_y"),
 					nbt.getInt("node_" + i + "_z")
 			));
+		}
+
+		this.rotated = MathHelper.clamp(nbt.getInt("rotated"), 0, 3);
+		this.x_mirrored = nbt.getBoolean("x_mirrored");
+		this.z_mirrored = nbt.getBoolean("z_mirrored");
+		if (this.getCachedState().getBlock() instanceof PathFindingNodeBlock) {
+			this.onRotate(this.getCachedState());
 		}
 
 		super.readNbt(nbt, registryLookup);
@@ -105,13 +106,13 @@ public class PathFindingNodeBlockEntity extends BlockEntity {
 	protected void onRotate(BlockState state) {
 		if (state.getBlock() instanceof PathFindingNodeBlock) {
 			if (state.get(PathFindingNodeBlock.ROTATED) != this.rotated) {
-				BlockRotation blockRotation = PathFindingNodeBlock.calculateRotationFromDifferentRotatedStates(state.get(PathFindingNodeBlock.ROTATED), this.rotated);
+				BlockRotation blockRotation = RotationUtils.calculateRotationFromDifferentRotatedStates(state.get(PathFindingNodeBlock.ROTATED), this.rotated);
 
 				List<String> keyList = this.nodes.keySet().stream().toList();
 				int nodesSize = this.nodes.keySet().size();
 				for (int i = 0; i < nodesSize; i++) {
 					String key = keyList.get(i);
-					BlockPos rotatedBlockPos = PathFindingNodeBlock.rotateOffsetBlockPos(this.nodes.get(key), blockRotation);
+					BlockPos rotatedBlockPos = RotationUtils.rotateOffsetBlockPos(this.nodes.get(key), blockRotation);
 					this.nodes.put(key, rotatedBlockPos);
 				}
 
@@ -123,7 +124,7 @@ public class PathFindingNodeBlockEntity extends BlockEntity {
 				int nodesSize = this.nodes.keySet().size();
 				for (int i = 0; i < nodesSize; i++) {
 					String key = keyList.get(i);
-					BlockPos mirroredBlockPos = PathFindingNodeBlock.mirrorOffsetBlockPos(this.nodes.get(key), BlockMirror.FRONT_BACK);
+					BlockPos mirroredBlockPos = RotationUtils.mirrorOffsetBlockPos(this.nodes.get(key), BlockMirror.FRONT_BACK);
 					this.nodes.put(key, mirroredBlockPos);
 				}
 
@@ -135,7 +136,7 @@ public class PathFindingNodeBlockEntity extends BlockEntity {
 				int nodesSize = this.nodes.keySet().size();
 				for (int i = 0; i < nodesSize; i++) {
 					String key = keyList.get(i);
-					BlockPos mirroredBlockPos = PathFindingNodeBlock.mirrorOffsetBlockPos(this.nodes.get(key), BlockMirror.LEFT_RIGHT);
+					BlockPos mirroredBlockPos = RotationUtils.mirrorOffsetBlockPos(this.nodes.get(key), BlockMirror.LEFT_RIGHT);
 					this.nodes.put(key, mirroredBlockPos);
 				}
 

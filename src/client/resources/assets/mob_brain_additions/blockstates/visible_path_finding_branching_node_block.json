@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "mob_brain_additions:block/visible_path_finding_branching_node_block"
+    }
+  }
+}

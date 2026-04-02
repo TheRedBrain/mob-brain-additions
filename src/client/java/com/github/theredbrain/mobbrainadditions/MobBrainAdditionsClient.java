@@ -2,6 +2,7 @@ package com.github.theredbrain.mobbrainadditions;
 
 import com.github.theredbrain.mobbrainadditions.registry.BlockRegistry;
 import com.github.theredbrain.mobbrainadditions.registry.EntityRegistry;
+import com.github.theredbrain.mobbrainadditions.render.block.entity.PathFindingBranchingNodeBlockEntityRenderer;
 import com.github.theredbrain.mobbrainadditions.render.block.entity.PathFindingNodeBlockEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -21,12 +22,15 @@ public class MobBrainAdditionsClient implements ClientModInitializer {
 	private void registerTransparency() {
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
 				BlockRegistry.PATH_FINDING_NODE_BLOCK,
-				BlockRegistry.VISIBLE_PATH_FINDING_NODE_BLOCK
+				BlockRegistry.VISIBLE_PATH_FINDING_NODE_BLOCK,
+				BlockRegistry.PATH_FINDING_BRANCHING_NODE_BLOCK,
+				BlockRegistry.VISIBLE_PATH_FINDING_BRANCHING_NODE_BLOCK
 		);
 	}
 
 	private void registerBlockEntityRenderer() {
 		BlockEntityRendererFactories.register(EntityRegistry.PATH_FINDING_NODE_BLOCK_ENTITY, PathFindingNodeBlockEntityRenderer::new);
+		BlockEntityRendererFactories.register(EntityRegistry.PATH_FINDING_BRANCHING_NODE_BLOCK_ENTITY, PathFindingBranchingNodeBlockEntityRenderer::new);
 	}
 
 }

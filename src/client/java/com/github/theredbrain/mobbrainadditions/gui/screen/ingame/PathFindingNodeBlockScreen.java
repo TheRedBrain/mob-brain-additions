@@ -3,6 +3,7 @@ package com.github.theredbrain.mobbrainadditions.gui.screen.ingame;
 import com.github.theredbrain.mobbrainadditions.MobBrainAdditions;
 import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingNodeBlockEntity;
 import com.github.theredbrain.mobbrainadditions.network.packet.UpdatePathFindingNodeBlockPacket;
+import com.github.theredbrain.mobbrainadditions.util.ParsingUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -28,29 +29,29 @@ import java.util.Map;
 
 @Environment(value = EnvType.CLIENT)
 public class PathFindingNodeBlockScreen extends Screen {
-	private static final Text REMOVE_LIST_ENTRY_BUTTON_LABEL_TEXT = Text.translatable("gui.path_finding_node_block.remove_list_entry_button_label");
 	private static final Text NEW_NODE_POSITION_OFFSET_LABEL_TEXT = Text.translatable("gui.path_finding_node_block.new_node_position_offset");
 	private static final Text NEW_NODE_IDENTIFIER_LABEL_TEXT = Text.translatable("gui.path_finding_node_block.new_node_identifier");
 	private static final Text ADD_NEW_NODE_BUTTON_LABEL_TEXT = Text.translatable("gui.path_finding_node_block.add_new_node_button_label");
-	private static final Identifier SCROLL_BAR_BACKGROUND_8_70_TEXTURE = MobBrainAdditions.identifier("scroll_bar/scroll_bar_background_8_70");
+	private static final Identifier SCROLL_BAR_BACKGROUND_8_92_TEXTURE = MobBrainAdditions.identifier("scroll_bar/scroll_bar_background_8_92");
 	private static final Identifier SCROLLER_TEXTURE = MobBrainAdditions.identifier("scroll_bar/scroller_vertical_6_7");
 	public static final ButtonTextures REMOVE_ENTRY_BUTTON_TEXTURES = new ButtonTextures(
 			MobBrainAdditions.identifier("widgets/remove_entry_button"), MobBrainAdditions.identifier("widgets/remove_entry_button_highlighted")
 	);
 	private final PathFindingNodeBlockEntity pathFindingNodeBlockEntity;
-	private ButtonWidget removeSideEntranceButton0;
-	private ButtonWidget removeSideEntranceButton1;
-	private ButtonWidget removeSideEntranceButton2;
+	private ButtonWidget removeNodeButton0;
+	private ButtonWidget removeNodeButton1;
+	private ButtonWidget removeNodeButton2;
+	private ButtonWidget removeNodeButton3;
 	private TextFieldWidget newNodeIdentifierField;
 	private TextFieldWidget newNodePositionOffsetXField;
 	private TextFieldWidget newNodePositionOffsetYField;
 	private TextFieldWidget newNodePositionOffsetZField;
-	private ButtonWidget addNewSideEntranceButton;
+	private ButtonWidget addNewNodeButton;
 
 	private ButtonWidget saveButton;
 	private ButtonWidget cancelButton;
 
-	private List<MutablePair<String, BlockPos>> nodesList = new ArrayList<>();
+	private final List<MutablePair<String, BlockPos>> nodesList = new ArrayList<>();
 
 	private int scrollPosition = 0;
 	private float scrollAmount = 0.0f;
@@ -61,9 +62,9 @@ public class PathFindingNodeBlockScreen extends Screen {
 		this.pathFindingNodeBlockEntity = pathFindingNodeBlockEntity;
 	}
 
-	private void addNewSideEntrance() {
+	private void addNewNode() {
 		String newEntranceName = this.newNodeIdentifierField.getText();
-		if (newEntranceName.equals("")) {
+		if (newEntranceName.isEmpty()) {
 			return;
 		}
 		int indexToRemove = -1;
@@ -79,9 +80,9 @@ public class PathFindingNodeBlockScreen extends Screen {
 		this.nodesList.add(new MutablePair<>(
 						this.newNodeIdentifierField.getText(),
 						new BlockPos(
-								parseInt(this.newNodePositionOffsetXField.getText()),
-								parseInt(this.newNodePositionOffsetYField.getText()),
-								parseInt(this.newNodePositionOffsetZField.getText())
+								ParsingUtils.parseInt(this.newNodePositionOffsetXField.getText()),
+								ParsingUtils.parseInt(this.newNodePositionOffsetYField.getText()),
+								ParsingUtils.parseInt(this.newNodePositionOffsetZField.getText())
 						)
 				)
 		);
@@ -90,8 +91,11 @@ public class PathFindingNodeBlockScreen extends Screen {
 		this.updateWidgets();
 	}
 
-	private void removeSideEntrance(int index) {
-		this.nodesList.remove(index + this.scrollPosition);
+	private void removeNode(int index) {
+		int actualIndex = index + this.scrollPosition;
+		if (this.nodesList.size() > actualIndex) {
+			this.nodesList.remove(actualIndex);
+		}
 		this.scrollPosition = 0;
 		this.scrollAmount = 0.0f;
 		this.updateWidgets();
@@ -118,27 +122,28 @@ public class PathFindingNodeBlockScreen extends Screen {
 
 		super.init();
 
-		this.removeSideEntranceButton0 = this.addDrawableChild(new TexturedButtonWidget(this.width / 2 - 141, 44, 20, 20, REMOVE_ENTRY_BUTTON_TEXTURES, button -> this.removeSideEntrance(0)));
-		this.removeSideEntranceButton1 = this.addDrawableChild(new TexturedButtonWidget(this.width / 2 - 141, 68, 20, 20, REMOVE_ENTRY_BUTTON_TEXTURES, button -> this.removeSideEntrance(1)));
-		this.removeSideEntranceButton2 = this.addDrawableChild(new TexturedButtonWidget(this.width / 2 - 141, 92, 20, 20, REMOVE_ENTRY_BUTTON_TEXTURES, button -> this.removeSideEntrance(2)));
+		this.removeNodeButton0 = this.addDrawableChild(new TexturedButtonWidget(this.width / 2 - 141, 20, 20, 20, REMOVE_ENTRY_BUTTON_TEXTURES, button -> this.removeNode(0)));
+		this.removeNodeButton1 = this.addDrawableChild(new TexturedButtonWidget(this.width / 2 - 141, 44, 20, 20, REMOVE_ENTRY_BUTTON_TEXTURES, button -> this.removeNode(1)));
+		this.removeNodeButton2 = this.addDrawableChild(new TexturedButtonWidget(this.width / 2 - 141, 68, 20, 20, REMOVE_ENTRY_BUTTON_TEXTURES, button -> this.removeNode(2)));
+		this.removeNodeButton3 = this.addDrawableChild(new TexturedButtonWidget(this.width / 2 - 141, 92, 20, 20, REMOVE_ENTRY_BUTTON_TEXTURES, button -> this.removeNode(3)));
 
-		this.newNodeIdentifierField = new TextFieldWidget(this.textRenderer, this.width / 2 - 154, 127, 300, 20, Text.empty());
+		this.addNewNodeButton = this.addDrawableChild(ButtonWidget.builder(ADD_NEW_NODE_BUTTON_LABEL_TEXT, button -> this.addNewNode()).dimensions(this.width / 2 - 4 - 150, 116, 308, 20).build());
+
+		this.newNodeIdentifierField = new TextFieldWidget(this.textRenderer, this.width / 2 - 154, 151, 300, 20, Text.empty());
 		this.newNodeIdentifierField.setMaxLength(128);
 		this.addSelectableChild(this.newNodeIdentifierField);
 
-		this.newNodePositionOffsetXField = new TextFieldWidget(this.textRenderer, this.width / 2 - 154, 162, 100, 20, Text.empty());
+		this.newNodePositionOffsetXField = new TextFieldWidget(this.textRenderer, this.width / 2 - 154, 186, 100, 20, Text.empty());
 		this.newNodePositionOffsetXField.setMaxLength(128);
 		this.addSelectableChild(this.newNodePositionOffsetXField);
 
-		this.newNodePositionOffsetYField = new TextFieldWidget(this.textRenderer, this.width / 2 - 50, 162, 100, 20, Text.empty());
+		this.newNodePositionOffsetYField = new TextFieldWidget(this.textRenderer, this.width / 2 - 50, 186, 100, 20, Text.empty());
 		this.newNodePositionOffsetYField.setMaxLength(128);
 		this.addSelectableChild(this.newNodePositionOffsetYField);
 
-		this.newNodePositionOffsetZField = new TextFieldWidget(this.textRenderer, this.width / 2 + 54, 162, 100, 20, Text.empty());
+		this.newNodePositionOffsetZField = new TextFieldWidget(this.textRenderer, this.width / 2 + 54, 186, 100, 20, Text.empty());
 		this.newNodePositionOffsetZField.setMaxLength(128);
 		this.addSelectableChild(this.newNodePositionOffsetZField);
-
-		this.addNewSideEntranceButton = this.addDrawableChild(ButtonWidget.builder(ADD_NEW_NODE_BUTTON_LABEL_TEXT, button -> this.addNewSideEntrance()).dimensions(this.width / 2 - 4 - 150, 186, 308, 20).build());
 
 		this.saveButton = this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.done()).dimensions(this.width / 2 - 4 - 150, 210, 150, 20).build());
 		this.cancelButton = this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, button -> this.cancel()).dimensions(this.width / 2 + 4, 210, 150, 20).build());
@@ -148,27 +153,30 @@ public class PathFindingNodeBlockScreen extends Screen {
 
 	private void updateWidgets() {
 
-		this.removeSideEntranceButton0.visible = false;
-		this.removeSideEntranceButton1.visible = false;
-		this.removeSideEntranceButton2.visible = false;
+		this.removeNodeButton0.visible = false;
+		this.removeNodeButton1.visible = false;
+		this.removeNodeButton2.visible = false;
+		this.removeNodeButton3.visible = false;
 
 		this.newNodeIdentifierField.setVisible(false);
 		this.newNodePositionOffsetXField.setVisible(false);
 		this.newNodePositionOffsetYField.setVisible(false);
 		this.newNodePositionOffsetZField.setVisible(false);
-		this.addNewSideEntranceButton.visible = false;
+		this.addNewNodeButton.visible = false;
 
 		this.saveButton.visible = false;
 		this.cancelButton.visible = false;
 
 		int index = 0;
-		for (int i = 0; i < Math.min(3, this.nodesList.size()); i++) {
+		for (int i = 0; i < Math.min(4, this.nodesList.size()); i++) {
 			if (index == 0) {
-				this.removeSideEntranceButton0.visible = true;
+				this.removeNodeButton0.visible = true;
 			} else if (index == 1) {
-				this.removeSideEntranceButton1.visible = true;
+				this.removeNodeButton1.visible = true;
 			} else if (index == 2) {
-				this.removeSideEntranceButton2.visible = true;
+				this.removeNodeButton2.visible = true;
+			} else if (index == 3) {
+				this.removeNodeButton3.visible = true;
 			}
 			index++;
 		}
@@ -177,7 +185,7 @@ public class PathFindingNodeBlockScreen extends Screen {
 		this.newNodePositionOffsetYField.setVisible(true);
 		this.newNodePositionOffsetZField.setVisible(true);
 		this.newNodeIdentifierField.setVisible(true);
-		this.addNewSideEntranceButton.visible = true;
+		this.addNewNodeButton.visible = true;
 
 		this.saveButton.visible = true;
 		this.cancelButton.visible = true;
@@ -218,10 +226,10 @@ public class PathFindingNodeBlockScreen extends Screen {
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		this.mouseClicked = false;
-		if (this.nodesList.size() > 3) {
+		if (this.nodesList.size() > 4) {
 			int i = this.width / 2 - 152;
-			int j = 45;
-			if (mouseX >= (double) i && mouseX < (double) (i + 6) && mouseY >= (double) j && mouseY < (double) (j + 68)) {
+			int j = 21;
+			if (mouseX >= (double) i && mouseX < (double) (i + 6) && mouseY >= (double) j && mouseY < (double) (j + 90)) {
 				this.mouseClicked = true;
 			}
 		}
@@ -230,9 +238,9 @@ public class PathFindingNodeBlockScreen extends Screen {
 
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-		if (this.nodesList.size() > 3
+		if (this.nodesList.size() > 4
 				&& this.mouseClicked) {
-			int i = this.nodesList.size() - 3;
+			int i = this.nodesList.size() - 4;
 			float f = (float) deltaY / (float) i;
 			this.scrollAmount = MathHelper.clamp(this.scrollAmount + f, 0.0f, 1.0f);
 			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) i));
@@ -242,10 +250,10 @@ public class PathFindingNodeBlockScreen extends Screen {
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-		if (this.nodesList.size() > 3
+		if (this.nodesList.size() > 4
 				&& mouseX >= (double) (this.width / 2 - 152) && mouseX <= (double) (this.width / 2 + 154)
-				&& mouseY >= 44 && mouseY <= 114) {
-			int i = this.nodesList.size() - 3;
+				&& mouseY >= 20 && mouseY <= 112) {
+			int i = this.nodesList.size() - 4;
 			float f = (float) verticalAmount / (float) i;
 			this.scrollAmount = MathHelper.clamp(this.scrollAmount - f, 0.0f, 1.0f);
 			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) i));
@@ -267,21 +275,26 @@ public class PathFindingNodeBlockScreen extends Screen {
 
 		super.render(context, mouseX, mouseY, delta);
 
-		for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + 3, this.nodesList.size()); i++) {
-			String text = this.nodesList.get(i).getLeft();
-			if (!this.nodesList.get(i).getLeft().isEmpty()) {
-				text = this.nodesList.get(i).getLeft() + ", " + this.nodesList.get(i).getRight().toString();
-			}
-			context.drawTextWithShadow(this.textRenderer, text, this.width / 2 - 117, 50 + ((i - this.scrollPosition) * 24), 0xA0A0A0);
+		for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + 4, this.nodesList.size()); i++) {
+			MutablePair<String, BlockPos> node = this.nodesList.get(i);
+			BlockPos nodeOffset = node.getRight();
+			context.drawTextWithShadow(this.textRenderer,
+					Text.translatable("gui.path_finding_node_block.node_list.id", node.getLeft()),
+					this.width / 2 - 117, 21 + ((i - this.scrollPosition) * 24), 0xA0A0A0);
+			context.drawTextWithShadow(this.textRenderer,
+					Text.translatable("gui.path_finding_node_block.node_list.offset", nodeOffset.getX(), nodeOffset.getY(), nodeOffset.getZ()),
+					this.width / 2 - 117, 31 + ((i - this.scrollPosition) * 24), 0xA0A0A0);
 		}
-		if (this.nodesList.size() > 3) {
-			context.drawTexture(SCROLL_BAR_BACKGROUND_8_70_TEXTURE, this.width / 2 - 153, 44, 0, 0, 8, 70);
-			int k = (int) (61.0f * this.scrollAmount);
-			context.drawTexture(SCROLLER_TEXTURE, this.width / 2 - 152, 44 + 1 + k, 0, 0, 6, 7);
+		if (this.nodesList.size() > 4) {
+			context.drawGuiTexture(SCROLL_BAR_BACKGROUND_8_92_TEXTURE, this.width / 2 - 153, 20, 8, 92);
+			int k = (int) (83.0f * this.scrollAmount);
+			context.drawGuiTexture(SCROLLER_TEXTURE, this.width / 2 - 152, 20 + 1 + k, 6, 7);
 		}
-		context.drawTextWithShadow(this.textRenderer, NEW_NODE_IDENTIFIER_LABEL_TEXT, this.width / 2 - 153, 116, 0xA0A0A0);
+		context.drawTextWithShadow(this.textRenderer, NEW_NODE_IDENTIFIER_LABEL_TEXT, this.width / 2 - 153, 141, 0xA0A0A0);
 		this.newNodeIdentifierField.render(context, mouseX, mouseY, delta);
-		context.drawTextWithShadow(this.textRenderer, NEW_NODE_POSITION_OFFSET_LABEL_TEXT, this.width / 2 - 153, 151, 0xA0A0A0);
+
+		int textWidth = textRenderer.getWidth(NEW_NODE_POSITION_OFFSET_LABEL_TEXT);
+		context.drawTextWithShadow(this.textRenderer, NEW_NODE_POSITION_OFFSET_LABEL_TEXT, (this.width - textWidth) / 2, 176, 0xA0A0A0);
 		this.newNodePositionOffsetXField.render(context, mouseX, mouseY, delta);
 		this.newNodePositionOffsetYField.render(context, mouseX, mouseY, delta);
 		this.newNodePositionOffsetZField.render(context, mouseX, mouseY, delta);
@@ -298,14 +311,6 @@ public class PathFindingNodeBlockScreen extends Screen {
 				this.nodesList
 		));
 		return true;
-	}
-
-	public static int parseInt(String string) {
-		try {
-			return Integer.parseInt(string);
-		} catch (NumberFormatException numberFormatException) {
-			return 0;
-		}
 	}
 
 }

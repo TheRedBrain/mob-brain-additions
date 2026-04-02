@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "mob_brain_additions:block/path_finding_branching_node_block"
+  },
+  "display": {
+    "head": {
+      "translation": [ 0, 14, -5 ]
+    }
+  }
+}

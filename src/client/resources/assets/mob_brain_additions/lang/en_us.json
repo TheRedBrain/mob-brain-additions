@@ -1,7 +1,21 @@
 {
 	"block.mob_brain_additions.path_finding_node_block": "Path Finding Node",
-	"gui.path_finding_node_block.remove_list_entry_button_label": "",
-	"gui.path_finding_node_block.new_node_position_offset": "New Node Position Offset",
-	"gui.path_finding_node_block.new_node_identifier": "New Node Identifier",
-	"gui.path_finding_node_block.add_new_node_button_label": "Add New Node"
+	"block.mob_brain_additions.path_finding_branching_node_block": "Path Finding Branching Node",
+
+	"gui.path_finding_node_block.add_new_node_button_label": "Add New Node",
+	"gui.path_finding_node_block.new_node_position_offset": "Position Offset",
+	"gui.path_finding_node_block.new_node_identifier": "Identifier",
+	"gui.path_finding_node_block.node_list.id": "Node with id: %s",
+	"gui.path_finding_node_block.node_list.offset": "Has an offset of X: %s, Y: %s, Z: %s",
+
+	"gui.path_finding_branching_node_block.node_identifier": "Node Identifier",
+	"gui.path_finding_branching_node_block.add_new_branch_button_label": "Add New Branch",
+	"gui.path_finding_branching_node_block.new_branch_position_offset": "Position Offset",
+	"gui.path_finding_branching_node_block.new_branch_weight": "Weight",
+
+	"gui.path_finding_branching_node_block.branch_list.offset": "Branch with offset X: %s, Y: %s, Z: %s",
+	"gui.path_finding_branching_node_block.branch_list.weight": "Has a weight of %s to be chosen",
+
+	"hud.message.node_block.no_permission": "You don't have the required permission for this action!",
+	"hud.message.node_block.update_successful": "%s updated successful!"
 }
