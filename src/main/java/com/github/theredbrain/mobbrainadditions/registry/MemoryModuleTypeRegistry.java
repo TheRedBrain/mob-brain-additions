@@ -7,6 +7,7 @@ import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Unit;
+import net.minecraft.util.math.GlobalPos;
 
 import java.util.Map;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class MemoryModuleTypeRegistry {
 
 	public static MemoryModuleType<Unit> IS_NEAR_HOME;
+	public static MemoryModuleType<GlobalPos> PATH_END_POSITION;
 
 	private static <T> MemoryModuleType<T> register(String id) {
 		return Registry.register(Registries.MEMORY_MODULE_TYPE, MobBrainAdditions.identifier(id), new MemoryModuleType<>(Optional.empty()));
@@ -25,5 +27,6 @@ public class MemoryModuleTypeRegistry {
 
 	public static void init() {
 		IS_NEAR_HOME = register("is_near_home", Unit.CODEC);
+		PATH_END_POSITION = register("path_end_position", GlobalPos.CODEC);
 	}
 }

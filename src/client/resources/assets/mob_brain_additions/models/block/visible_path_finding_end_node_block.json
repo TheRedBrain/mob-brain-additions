@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "mob_brain_additions:block/path_finding_end_node_block"
+  }
+}

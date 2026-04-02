@@ -1,9 +1,11 @@
 package com.github.theredbrain.mobbrainadditions.mixin.client.network;
 
 import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingBranchingNodeBlockEntity;
+import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingEndNodeBlockEntity;
 import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingNodeBlockEntity;
 import com.github.theredbrain.mobbrainadditions.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.mobbrainadditions.gui.screen.ingame.PathFindingBranchingNodeBlockScreen;
+import com.github.theredbrain.mobbrainadditions.gui.screen.ingame.PathFindingEndNodeBlockScreen;
 import com.github.theredbrain.mobbrainadditions.gui.screen.ingame.PathFindingNodeBlockScreen;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
@@ -36,6 +38,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	@Override
 	public void scriptblocks$openPathFindingBranchingNodeBlockScreen(PathFindingBranchingNodeBlockEntity pathFindingBranchingNodeBlockEntity) {
 		this.client.setScreen(new PathFindingBranchingNodeBlockScreen(pathFindingBranchingNodeBlockEntity));
+	}
+
+	@Override
+	public void scriptblocks$openPathFindingEndNodeBlockScreen(PathFindingEndNodeBlockEntity pathFindingEndNodeBlockEntity) {
+		this.client.setScreen(new PathFindingEndNodeBlockScreen(pathFindingEndNodeBlockEntity));
 	}
 
 }
