@@ -1,11 +1,9 @@
 package com.github.theredbrain.mobbrainadditions.block;
 
 import com.github.theredbrain.mobbrainadditions.MobBrainAdditions;
-import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingBranchingNodeBlockEntity;
 import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingEndNodeBlockEntity;
 import com.github.theredbrain.mobbrainadditions.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.mobbrainadditions.registry.BlockRegistry;
-import com.github.theredbrain.mobbrainadditions.util.RotationUtils;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
@@ -21,16 +19,15 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -39,11 +36,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class PathFindingEndNodeBlock extends BlockWithEntity implements Waterloggable {
 	public static final MapCodec<PathFindingEndNodeBlock> CODEC = createCodec(PathFindingEndNodeBlock::new);
+	public static final BooleanProperty TRIGGERED = Properties.TRIGGERED;
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
 
 	public PathFindingEndNodeBlock(Settings settings) {
 		super(settings);
-		this.setDefaultState(this.stateManager.getDefaultState().with(WATERLOGGED, false));
+		this.setDefaultState(this.stateManager.getDefaultState().with(TRIGGERED, false).with(WATERLOGGED, false));
 	}
 
 	public MapCodec<PathFindingEndNodeBlock> getCodec() {
@@ -52,7 +50,7 @@ public class PathFindingEndNodeBlock extends BlockWithEntity implements Waterlog
 
 	@Override
 	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-		builder.add(WATERLOGGED);
+		builder.add(TRIGGERED, WATERLOGGED);
 	}
 
 	@Nullable
@@ -125,6 +123,43 @@ public class PathFindingEndNodeBlock extends BlockWithEntity implements Waterlog
 			return ActionResult.success(world.isClient);
 		}
 		return ActionResult.PASS;
+	}
+
+	@Override
+	protected int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+		return state.get(TRIGGERED) ? 15 : 0;
+	}
+
+	@Override
+	protected int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+		return state.get(TRIGGERED) ? 15 : 0;
+	}
+
+	@Override
+	protected boolean emitsRedstonePower(BlockState state) {
+		return true;
+	}
+
+	@Override
+	protected void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+		if (state.get(TRIGGERED)) {
+			world.setBlockState(pos, (BlockState) state.with(TRIGGERED, false), Block.NOTIFY_ALL);
+			world.updateNeighborsAlways(pos, this);
+			for (Direction direction : Direction.values()) {
+				world.updateNeighborsAlways(pos.offset(direction), this);
+			}
+		}
+	}
+
+	public void trigger(World world, BlockState blockState, BlockPos pos) {
+		if (!blockState.get(TRIGGERED)) {
+			world.scheduleBlockTick(pos, this, 4);
+			world.setBlockState(pos, (BlockState) blockState.with(TRIGGERED, true), Block.NOTIFY_ALL);
+			world.updateNeighborsAlways(pos, this);
+			for (Direction direction : Direction.values()) {
+				world.updateNeighborsAlways(pos.offset(direction), this);
+			}
+		}
 	}
 
 }
