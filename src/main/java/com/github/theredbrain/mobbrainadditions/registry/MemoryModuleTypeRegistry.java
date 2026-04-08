@@ -15,6 +15,7 @@ import java.util.Optional;
 public class MemoryModuleTypeRegistry {
 
 	public static MemoryModuleType<Unit> IS_NEAR_HOME;
+	public static MemoryModuleType<GlobalPos> OLD_HOME;
 	public static MemoryModuleType<GlobalPos> PATH_END_POSITION;
 
 	private static <T> MemoryModuleType<T> register(String id) {
@@ -27,6 +28,7 @@ public class MemoryModuleTypeRegistry {
 
 	public static void init() {
 		IS_NEAR_HOME = register("is_near_home", Unit.CODEC);
+		OLD_HOME = register("old_home", GlobalPos.CODEC);
 		PATH_END_POSITION = register("path_end_position", GlobalPos.CODEC);
 	}
 }
