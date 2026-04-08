@@ -9,8 +9,15 @@
 	"gui.path_finding_node_block.node_list.id": "Node with id: %s",
 	"gui.path_finding_node_block.node_list.offset": "Has an offset of X: %s, Y: %s, Z: %s",
 
-	"gui.path_finding_node_end_block.new_node_identifier": "Node Identifier",
-	"gui.path_finding_node_end_block.add_new_node_identifier_button_label": "Add New Node Id",
+	"gui.path_finding_end_node_block.script_blocks_mode_label": "Script Blocks Mode",
+	"gui.path_finding_end_node_block.red_stone_mode_label": "Redstone Mode",
+	"gui.path_finding_end_node_block.add_new_entry_button_label": "Add New Entry",
+	"gui.path_finding_end_node_block.new_identifier": "Identifier",
+	"gui.path_finding_end_node_block.new_block_offset_label": "Position Offset",
+	"gui.path_finding_end_node_block.entry_list.script_blocks_mode.line_1": "Entry with Identifier: %s",
+	"gui.path_finding_end_node_block.entry_list.script_blocks_mode.line_2.reset": "Resets block with offset of X: %s, Y: %s, Z: %s",
+	"gui.path_finding_end_node_block.entry_list.script_blocks_mode.line_2.trigger": "Triggers block with offset of X: %s, Y: %s, Z: %s",
+	"gui.path_finding_end_node_block.entry_list.red_stone_mode": "%s",
 
 	"gui.path_finding_branching_node_block.node_identifier": "Node Identifier",
 	"gui.path_finding_branching_node_block.add_new_branch_button_label": "Add New Branch",

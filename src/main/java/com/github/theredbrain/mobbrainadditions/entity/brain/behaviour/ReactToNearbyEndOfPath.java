@@ -1,5 +1,6 @@
 package com.github.theredbrain.mobbrainadditions.entity.brain.behaviour;
 
+import com.github.theredbrain.mobbrainadditions.MobBrainAdditions;
 import com.github.theredbrain.mobbrainadditions.block.PathFindingEndNodeBlock;
 import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingEndNodeBlockEntity;
 import com.github.theredbrain.mobbrainadditions.entity.mob.TracksPathFindingNodes;
@@ -10,11 +11,14 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtils;
+import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.List;
 
@@ -57,15 +61,21 @@ public class ReactToNearbyEndOfPath<E extends MobEntity> extends ExtendedBehavio
 
 		if (entity instanceof TracksPathFindingNodes tracksPathFindingNodes && blockEntity instanceof PathFindingEndNodeBlockEntity pathFindingEndNodeBlockEntity) {
 			String string = tracksPathFindingNodes.getTrackedPathFindingNodeId();
-			if (!string.isEmpty() && pathFindingEndNodeBlockEntity.hasNodeId(string)) {
+			if (!string.isEmpty()) {
+				MutablePair<BlockPos, Boolean> triggeredPos = pathFindingEndNodeBlockEntity.getTriggeredPos(string);
+				if (triggeredPos != null) {
 
-				BlockState blockState = world.getBlockState(pathEndGlobalPosition.pos());
-				if (blockState.getBlock() instanceof PathFindingEndNodeBlock pathFindingEndNodeBlock) {
-					pathFindingEndNodeBlock.trigger(world, blockState, pathEndGlobalPosition.pos());
-				}
+					if (!pathFindingEndNodeBlockEntity.useScriptBlocksMode() || (world instanceof ServerWorld serverWorld && !MobBrainAdditions.trigger(serverWorld, triggeredPos.getLeft(), triggeredPos.getRight()))) {
+						BlockState blockState = world.getBlockState(pathEndGlobalPosition.pos());
 
-				if (this.discardEntity) {
-					entity.discard();
+						if (blockState.getBlock() instanceof PathFindingEndNodeBlock pathFindingEndNodeBlock) {
+							pathFindingEndNodeBlock.trigger(world, blockState, pathEndGlobalPosition.pos());
+						}
+					}
+
+					if (this.discardEntity) {
+						entity.discard();
+					}
 				}
 			}
 		}

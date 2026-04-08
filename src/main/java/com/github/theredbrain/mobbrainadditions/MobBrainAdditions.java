@@ -1,5 +1,6 @@
 package com.github.theredbrain.mobbrainadditions;
 
+import com.github.theredbrain.mobbrainadditions.compat.ScriptBlocksCompat;
 import com.github.theredbrain.mobbrainadditions.config.ServerConfig;
 import com.github.theredbrain.mobbrainadditions.registry.BlockRegistry;
 import com.github.theredbrain.mobbrainadditions.registry.EntityRegistry;
@@ -8,7 +9,10 @@ import com.github.theredbrain.mobbrainadditions.registry.SensorTypeRegistry;
 import com.github.theredbrain.mobbrainadditions.registry.ServerPacketRegistry;
 import me.fzzyhmstrs.fzzy_config.api.ConfigApiJava;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +20,8 @@ public class MobBrainAdditions implements ModInitializer {
 	public static final String MOD_ID = "mob_brain_additions";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static ServerConfig SERVER_CONFIG;
+
+	public static final boolean isScriptBlocksLoaded = FabricLoader.getInstance().isModLoaded("scriptblocks");
 
 	@Override
 	public void onInitialize() {
@@ -31,6 +37,14 @@ public class MobBrainAdditions implements ModInitializer {
 		MemoryModuleTypeRegistry.init();
 		SensorTypeRegistry.init();
 		ServerPacketRegistry.init();
+	}
+
+	public static boolean trigger(ServerWorld serverWorld, BlockPos blockPos, boolean resets) {
+		if (isScriptBlocksLoaded) {
+			ScriptBlocksCompat.trigger(serverWorld, blockPos, resets);
+			return true;
+		}
+		return false;
 	}
 
 	public static Identifier identifier(String path) {

@@ -106,6 +106,13 @@ dependencies {
 	// Tiny Config
 	modImplementation("maven.modrinth:tiny-config:${project.tiny_config_version}")
 
+	// Slot Customization API
+	modImplementation "maven.modrinth:slot-customization-api:${project.slot_customization_api_version}"
+
+	// Script Blocks
+//	modImplementation "maven.modrinth:script-blocks:${project.scriptblocks_version}"
+	modImplementation(files("libs/script-blocks-${project.script_blocks_version}.jar"))
+
 }
 
 processResources {

@@ -9,7 +9,9 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.MutablePair;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class UpdatePathFindingEndNodeBlockPacketReceiver implements ServerPlayNetworking.PlayPayloadHandler<UpdatePathFindingEndNodeBlockPacket> {
@@ -26,7 +28,13 @@ public class UpdatePathFindingEndNodeBlockPacketReceiver implements ServerPlayNe
 
 		BlockPos pathFindingEndNodeBlockPosition = payload.pathFindingEndNodeBlockPosition();
 
-		List<String> nodeIdsList = payload.nodeIdsList();
+		boolean useScriptBlocksMode = payload.useScriptBlocksMode();
+
+		List<MutablePair<String, MutablePair<BlockPos, Boolean>>> triggeredBlocksList = payload.triggeredBlocksList();
+		HashMap<String, MutablePair<BlockPos, Boolean>> triggeredBlocks = new HashMap<>();
+		for (MutablePair<String, MutablePair<BlockPos, Boolean>> triggeredBlock : triggeredBlocksList) {
+			triggeredBlocks.put(triggeredBlock.getLeft(), triggeredBlock.getRight());
+		}
 
 		World world = serverPlayerEntity.getWorld();
 
@@ -35,7 +43,8 @@ public class UpdatePathFindingEndNodeBlockPacketReceiver implements ServerPlayNe
 
 		if (blockEntity instanceof PathFindingEndNodeBlockEntity pathFindingEndNodeBlockEntity) {
 
-			pathFindingEndNodeBlockEntity.setNodeIds(nodeIdsList);
+			pathFindingEndNodeBlockEntity.setUseScriptBlocksMode(useScriptBlocksMode);
+			pathFindingEndNodeBlockEntity.setTriggeredBlocks(triggeredBlocks);
 			serverPlayerEntity.sendMessage(Text.translatable("hud.message.node_block.update_successful", blockState.getBlock().getName()), true);
 			pathFindingEndNodeBlockEntity.markDirty();
 			world.updateListeners(pathFindingEndNodeBlockPosition, blockState, blockState, Block.NOTIFY_ALL);

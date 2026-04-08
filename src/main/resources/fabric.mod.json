@@ -34,5 +34,8 @@
 		"fabric-api": "*",
 		"fzzy_config": ">=${fzzy_config_version}",
 		"smartbrainlib": ">=${smart_brain_lib_version}"
+	},
+	"optional": {
+		"scriptblocks" : ">=${script_blocks_version}"
 	}
 }
