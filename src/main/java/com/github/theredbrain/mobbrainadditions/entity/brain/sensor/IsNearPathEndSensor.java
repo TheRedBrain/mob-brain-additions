@@ -14,15 +14,15 @@ import net.minecraft.util.math.GlobalPos;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.object.SquareRadius;
 import net.tslat.smartbrainlib.util.BrainUtils;
+import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.List;
 
 /**
- * This sensor checks if the entity is near the end of a path. If the distance is larger than allowed, the {@link MemoryModuleTypeRegistry#IS_NEAR_HOME}, {@link MemoryModuleType#ATTACK_TARGET} and {@link MemoryModuleType#WALK_TARGET} memories are cleared.
- * If the entity has no {@link MemoryModuleType#HOME} memory, only the {@link MemoryModuleTypeRegistry#IS_NEAR_HOME} memory is cleared.<br>
+ * This sensor checks if the entity is near the end of a path (defined by a Path End Block) and sets the {@link MemoryModuleTypeRegistry#PATH_END_POSITION} to the position of that block.<br>
  * Default:
  * <ul>
- *     <li>10-block max distance from path</li>
+ *     <li>1-block radius to check for path ends</li>
  * </ul>
  *
  * @param <E> The entity
@@ -76,12 +76,14 @@ public class IsNearPathEndSensor<E extends MobEntity> extends ExtendedSensor<E> 
 			if (entity instanceof TracksPathFindingNodes tracksPathFindingNodes && level.getBlockEntity(pos) instanceof PathFindingEndNodeBlockEntity pathFindingEndNodeBlockEntity) {
 				String trackedPathFindingNodeId = tracksPathFindingNodes.getTrackedPathFindingNodeId();
 				if (!trackedPathFindingNodeId.isEmpty()) {
-					if (pathFindingEndNodeBlockEntity.hasNodeId(trackedPathFindingNodeId)) {
+					MutablePair<BlockPos, Boolean> triggeredBlock = pathFindingEndNodeBlockEntity.getTriggeredPos(trackedPathFindingNodeId);
+					if (triggeredBlock != null) {
 						BrainUtils.setMemory(entity, MemoryModuleTypeRegistry.PATH_END_POSITION, new GlobalPos(level.getRegistryKey(), pos));
-						break;
+						return;
 					}
 				}
 			}
 		}
+		BrainUtils.clearMemory(entity, MemoryModuleTypeRegistry.PATH_END_POSITION);
 	}
 }

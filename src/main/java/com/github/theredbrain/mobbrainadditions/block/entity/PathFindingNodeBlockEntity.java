@@ -109,9 +109,7 @@ public class PathFindingNodeBlockEntity extends BlockEntity implements ProvidesP
 				BlockRotation blockRotation = RotationUtils.calculateRotationFromDifferentRotatedStates(state.get(PathFindingNodeBlock.ROTATED), this.rotated);
 
 				List<String> keyList = this.nodes.keySet().stream().toList();
-				int nodesSize = this.nodes.keySet().size();
-				for (int i = 0; i < nodesSize; i++) {
-					String key = keyList.get(i);
+				for (String key : keyList) {
 					BlockPos rotatedBlockPos = RotationUtils.rotateOffsetBlockPos(this.nodes.get(key), blockRotation);
 					this.nodes.put(key, rotatedBlockPos);
 				}
@@ -121,9 +119,7 @@ public class PathFindingNodeBlockEntity extends BlockEntity implements ProvidesP
 			if (state.get(PathFindingNodeBlock.X_MIRRORED) != this.x_mirrored) {
 
 				List<String> keyList = this.nodes.keySet().stream().toList();
-				int nodesSize = this.nodes.keySet().size();
-				for (int i = 0; i < nodesSize; i++) {
-					String key = keyList.get(i);
+				for (String key : keyList) {
 					BlockPos mirroredBlockPos = RotationUtils.mirrorOffsetBlockPos(this.nodes.get(key), BlockMirror.FRONT_BACK);
 					this.nodes.put(key, mirroredBlockPos);
 				}
@@ -133,9 +129,7 @@ public class PathFindingNodeBlockEntity extends BlockEntity implements ProvidesP
 			if (state.get(PathFindingNodeBlock.Z_MIRRORED) != this.z_mirrored) {
 
 				List<String> keyList = this.nodes.keySet().stream().toList();
-				int nodesSize = this.nodes.keySet().size();
-				for (int i = 0; i < nodesSize; i++) {
-					String key = keyList.get(i);
+				for (String key : keyList) {
 					BlockPos mirroredBlockPos = RotationUtils.mirrorOffsetBlockPos(this.nodes.get(key), BlockMirror.LEFT_RIGHT);
 					this.nodes.put(key, mirroredBlockPos);
 				}
