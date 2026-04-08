@@ -23,7 +23,12 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import java.util.List;
 
 /**
- * Set the walk and look target of the entity to its current home position.
+ * Reacts to a nearby "Path Finding End Node" (the position of which is saved in the {@link MemoryModuleTypeRegistry#PATH_END_POSITION} memory).<br>
+ * The "Path Finding End Node" block will get "triggered" (the exact result of this depends on the settings of the "Path Finding End Node" block).<br>
+ * The entity is optionally discarded.<br>
+ * Defaults:
+ * <ul>
+ *     <li>The entity is not discarded.</li>
  *
  * @param <E> The entity
  */
