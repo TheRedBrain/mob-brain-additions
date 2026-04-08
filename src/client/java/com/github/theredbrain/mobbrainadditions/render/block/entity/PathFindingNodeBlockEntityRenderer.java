@@ -3,6 +3,7 @@ package com.github.theredbrain.mobbrainadditions.render.block.entity;
 import com.github.theredbrain.mobbrainadditions.MobBrainAdditions;
 import com.github.theredbrain.mobbrainadditions.block.entity.PathFindingNodeBlockEntity;
 import com.github.theredbrain.mobbrainadditions.registry.BlockRegistry;
+import com.github.theredbrain.mobbrainadditions.registry.Tags;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -29,7 +30,7 @@ public class PathFindingNodeBlockEntityRenderer
 		boolean debugRender = MobBrainAdditions.SERVER_CONFIG.enable_path_finding_node_block_debug_mode.get();
 		ClientPlayerEntity player = MinecraftClient.getInstance().player;
 		if (player != null) {
-			debugRender = debugRender || (player.isCreativeLevelTwoOp() && player.getInventory().getMainHandStack().isOf(BlockRegistry.PATH_FINDING_NODE_BLOCK.asItem()));
+			debugRender = debugRender || (player.isCreativeLevelTwoOp() && player.getInventory().getMainHandStack().isIn(Tags.PROVIDES_PATH_FINDING_NODE));
 		}
 		if (debugRender) {
 			blockRenderManager.renderBlock(BlockRegistry.VISIBLE_PATH_FINDING_NODE_BLOCK.getDefaultState(), pathFindingNodeBlockEntity.getPos(), pathFindingNodeBlockEntity.getWorld(), matrixStack, vertexConsumer, true, Random.create());

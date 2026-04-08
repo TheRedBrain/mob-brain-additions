@@ -36,7 +36,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class PathFindingBranchingNodeBlock extends BlockWithEntity implements Waterloggable {
+public class PathFindingBranchingNodeBlock extends BlockWithEntity implements Waterloggable, PathFindingNode {
 	public static final MapCodec<PathFindingBranchingNodeBlock> CODEC = createCodec(PathFindingBranchingNodeBlock::new);
 	public static final IntProperty ROTATED = IntProperty.of("rotated", 0, 3);
 	public static final BooleanProperty X_MIRRORED = BooleanProperty.of("x_mirrored");
@@ -103,7 +103,7 @@ public class PathFindingBranchingNodeBlock extends BlockWithEntity implements Wa
 	@Override
 	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
 		BlockState pathFindingBranchingNodeBlockState = BlockRegistry.VISIBLE_PATH_FINDING_BRANCHING_NODE_BLOCK.getDefaultState();
-		if (!(MobBrainAdditions.SERVER_CONFIG.enable_path_finding_node_block_debug_mode.get() || context.isHolding(BlockRegistry.PATH_FINDING_BRANCHING_NODE_BLOCK.asItem()))) {
+		if (!(MobBrainAdditions.SERVER_CONFIG.enable_path_finding_node_block_debug_mode.get() || isPathFindingNodeVisible(context))) {
 			pathFindingBranchingNodeBlockState = Blocks.AIR.getDefaultState();
 		}
 		return pathFindingBranchingNodeBlockState.getOutlineShape(world, pos);

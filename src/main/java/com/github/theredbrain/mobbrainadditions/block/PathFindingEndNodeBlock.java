@@ -34,7 +34,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class PathFindingEndNodeBlock extends BlockWithEntity implements Waterloggable {
+public class PathFindingEndNodeBlock extends BlockWithEntity implements Waterloggable, PathFindingNode {
 	public static final MapCodec<PathFindingEndNodeBlock> CODEC = createCodec(PathFindingEndNodeBlock::new);
 	public static final BooleanProperty TRIGGERED = Properties.TRIGGERED;
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
@@ -99,7 +99,7 @@ public class PathFindingEndNodeBlock extends BlockWithEntity implements Waterlog
 	@Override
 	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
 		BlockState pathFindingBranchingNodeBlockState = BlockRegistry.VISIBLE_PATH_FINDING_BRANCHING_NODE_BLOCK.getDefaultState();
-		if (!(MobBrainAdditions.SERVER_CONFIG.enable_path_finding_node_block_debug_mode.get() || context.isHolding(BlockRegistry.PATH_FINDING_END_NODE_BLOCK.asItem()))) {
+		if (!(MobBrainAdditions.SERVER_CONFIG.enable_path_finding_node_block_debug_mode.get() || isPathFindingNodeVisible(context))) {
 			pathFindingBranchingNodeBlockState = Blocks.AIR.getDefaultState();
 		}
 		return pathFindingBranchingNodeBlockState.getOutlineShape(world, pos);

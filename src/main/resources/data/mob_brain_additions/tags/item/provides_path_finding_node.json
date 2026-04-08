@@ -1,0 +1,7 @@
+{
+  "values": [
+    "mob_brain_additions:path_finding_node_block",
+    "mob_brain_additions:path_finding_branching_node_block",
+    "mob_brain_additions:path_finding_end_node_block"
+  ]
+}
