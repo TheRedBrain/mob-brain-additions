@@ -2,6 +2,7 @@ package com.github.theredbrain.mobbrainadditions.entity.brain.sensor;
 
 import com.github.theredbrain.mobbrainadditions.block.entity.ProvidesPathFindingNode;
 import com.github.theredbrain.mobbrainadditions.entity.mob.TracksPathFindingNodes;
+import com.github.theredbrain.mobbrainadditions.registry.MemoryModuleTypeRegistry;
 import com.github.theredbrain.mobbrainadditions.registry.SensorTypeRegistry;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -17,9 +18,11 @@ import net.tslat.smartbrainlib.util.BrainUtils;
 import java.util.List;
 
 public class UpdateHomeFromPathFindingBlockSensor<E extends MobEntity> extends ExtendedSensor<E> { // Extend PredicateSensor so we can use the builtin predicate to check for lava
-	private static final List<MemoryModuleType<?>> MEMORIES = ObjectArrayList.of(MemoryModuleType.HOME); // Make a static list of memories this sensor applies to. For this example we'll assume we registered a custom MemoryModuleType in MyMemoryTypes
+	private static final List<MemoryModuleType<?>> MEMORIES = ObjectArrayList.of(MemoryModuleType.HOME, MemoryModuleTypeRegistry.OLD_HOME); // Make a static list of memories this sensor applies to. For this example we'll assume we registered a custom MemoryModuleType in MyMemoryTypes
 
 	protected SquareRadius radius = new SquareRadius(1, 1);
+
+	protected boolean updateOldHome = true;
 
 	public UpdateHomeFromPathFindingBlockSensor() {
 	}
@@ -32,6 +35,17 @@ public class UpdateHomeFromPathFindingBlockSensor<E extends MobEntity> extends E
 	@Override
 	public SensorType<? extends ExtendedSensor<?>> type() {
 		return SensorTypeRegistry.UPDATE_HOME_FROM_PATH_FINDING_BLOCK; // Return the SensorType for this sensor. For this example we'll assume we registered our sensortype in MySensorTypes
+	}
+
+	/**
+	 * Set whether this sensor should save the previous HOME as OLD_HOME
+	 *
+	 * @return this
+	 */
+	public UpdateHomeFromPathFindingBlockSensor<E> updateOldHome(boolean updateOldHome) {
+		this.updateOldHome = updateOldHome;
+
+		return this;
 	}
 
 	/**
@@ -68,6 +82,13 @@ public class UpdateHomeFromPathFindingBlockSensor<E extends MobEntity> extends E
 				if (!trackedPathFindingNodeId.isEmpty()) {
 					newHomePos = providesPathFindingNode.getNode(trackedPathFindingNodeId);
 					if (newHomePos != null) {
+
+						GlobalPos oldHomePos = BrainUtils.getMemory(entity, MemoryModuleType.HOME);
+
+						if (this.updateOldHome && oldHomePos != null) {
+							BrainUtils.setMemory(entity, MemoryModuleTypeRegistry.OLD_HOME, new GlobalPos(oldHomePos.dimension(), oldHomePos.pos()));
+						}
+
 						BrainUtils.setMemory(entity, MemoryModuleType.HOME, new GlobalPos(level.getRegistryKey(), newHomePos));
 						break;
 					}
